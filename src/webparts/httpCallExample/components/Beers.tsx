@@ -4,7 +4,7 @@ import { Component } from "react";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import DataFactory from '../DataFactory';
 import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { ChoiceGroup } from 'office-ui-fabric-react/lib/ChoiceGroup';
+import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 
 export interface BeersProps {
@@ -14,6 +14,8 @@ export interface BeersProps {
 export interface BeersState {
   Products: IProduct[];
   showPanel: boolean;
+  groupOptions: IChoiceGroupOption[];
+  selectedOption: IChoiceGroupOption;
 }
 
 class Beers extends React.Component<BeersProps, BeersState> {
@@ -21,7 +23,9 @@ class Beers extends React.Component<BeersProps, BeersState> {
     super(props);
     this.state = {
       Products: [],
-      showPanel: false
+      showPanel: false,
+      groupOptions: [],
+      selectedOption: undefined
     };
   }
 
@@ -35,12 +39,19 @@ class Beers extends React.Component<BeersProps, BeersState> {
     var products = await api.GetProductsAsync(this.props.context, url);
     this.setState({Products: products});
     console.table(this.state.Products);
+
+    var options: IChoiceGroupOption[] = [];
+    this.state.Products.map((product, i)=>{
+      options.push({key: product.ProductName, text: `${product.ProductName} - ${product.ProductDesc}` });
+    });
+    this.setState({groupOptions: options});
+    console.table(options);
   }
 
   render() : JSX.Element {
     return (
       <div>
-        <DefaultButton onClick={this._onShowPanel} text="Order Now" />
+        <PrimaryButton onClick={this._onShowPanel} text="Order Now" />
         <Panel
           isOpen={this.state.showPanel}
           type={PanelType.smallFixedFar}
@@ -50,34 +61,42 @@ class Beers extends React.Component<BeersProps, BeersState> {
           onRenderFooterContent={this._onRenderFooterContent}
         >
          <ChoiceGroup
-            options={[
-              {
-                key: 'A',
-                text: 'Red Horse'
-              },
-              {
-                key: 'B',
-                text: 'Emperador',
-              },
-              {
-                key: 'C',
-                text: 'San Mig Light',
-              }
-            ]}
+            // options={[
+            //   {
+            //     key: 'A',
+            //     text: 'Red Horse'
+            //   },
+            //   {
+            //     key: 'B',
+            //     text: 'Emperador',
+            //   },
+            //   {
+            //     key: 'C',
+            //     text: 'San Mig Light',
+            //   }
+            // ]}
+            options={this.state.groupOptions}
             label="Pick one!"
             required={true}
+            onChange={this._onChoiceChange}
           />
         </Panel>
       </div>
     );
   }
 
+private _onChoiceChange=(ev: React.FormEvent<HTMLInputElement>, option: IChoiceGroupOption) : void=>{
+  this.setState({selectedOption: option});
+  console.log("selected option: ", option.key);
+  console.log("this.state.selectedOption: ", this.state.selectedOption);
+}
+
   private _onClosePanel = (): void => {
     this.setState({ showPanel: false });
   };
 
   private _onBuyButtonClicked= (): void => {
-    alert("You bought ");
+    alert("You bought " + this.state.selectedOption.key);
     this.setState({ showPanel: false });
   };
 
