@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "http-call-example-client-side-solution",
+    "id": "936debce-7b16-422e-9ef9-0fda4a92e844",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/http-call-example.sppkg"
+  }
+}
