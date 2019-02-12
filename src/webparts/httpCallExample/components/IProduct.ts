@@ -3,5 +3,6 @@ export interface IProduct {
     ProductDesc: string;
     Price: number;
     Tax: number;
+    ID: number;
   }
   

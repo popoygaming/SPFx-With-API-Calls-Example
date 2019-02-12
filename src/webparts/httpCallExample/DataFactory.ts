@@ -25,7 +25,7 @@ export default class DataFactory {
     return products;
   }
 
-  public async AddItemToProducts(context: WebPartContext, url: string, listName: string, newProduct: IProduct) {
+  public async Products_AddItem(context: WebPartContext, url: string, listName: string, newProduct: IProduct) {
     const body: string = JSON.stringify({
       __metadata: {
         type: `${await this.GetListItemEntityTypeFullName(context, listName)}`
@@ -48,10 +48,57 @@ export default class DataFactory {
         return response.json();
       })
       .then((item: any): void => {
-        console.log("AddItemToProducts Successful!");
+        console.log("Products_AddItem Successful!");
       }, (error: any): void => {
-        console.log("AddItemToProducts Error!");
+        console.log("Products_AddItem Error!");
       });
+  }
+
+  public async Products_UpdateItem(context: WebPartContext, url: string, listName: string, updatedProduct: IProduct) {
+    const bodyJSON: string = JSON.stringify({
+        __metadata: {
+          type: `${await this.GetListItemEntityTypeFullName(context, listName)}`
+        },
+        ProductName: `${updatedProduct.ProductName}`,
+        ProductDesc: `${updatedProduct.ProductDesc}`,
+        Price: `${updatedProduct.Price}`,
+        Tax: `${updatedProduct.Tax}`
+      });
+
+      context.spHttpClient.post(
+        context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('${listName}')/items(${updatedProduct.ID})`,
+        SPHttpClient.configurations.v1,{
+            body:  bodyJSON,
+            headers:{
+                "IF-MATCH" : "*",
+                "X-HTTP-Method" : "MERGE",
+                "accept": "application/json",
+                "content-type": "application/json"
+            }
+        })
+        .then((response: SPHttpClientResponse): void =>{
+            console.log("Products_UpdateItem Success")
+        }, (error: any): void=>{
+            console.log("Products_UpdateItem Error")
+        });
+  }
+
+  public async Products_DeleteItems(context: WebPartContext, url: string, listName: string, updatedProduct: IProduct) {
+      context.spHttpClient.post(
+        context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('${listName}')/items(${updatedProduct.ID})`,
+        SPHttpClient.configurations.v1,{
+            headers:{
+                "IF-MATCH" : "*",
+                "X-HTTP-Method" : "DELETE",
+                "accept": "application/json",
+                "content-type": "application/json"
+            }
+        })
+        .then((response: SPHttpClientResponse): void =>{
+            console.log("Products_DeleteItems Success")
+        }, (error: any): void=>{
+            console.log("Products_DeleteItems Error")
+        });
   }
 
   public async GetListItemEntityTypeFullName(context: WebPartContext,listName: string): Promise<string> {

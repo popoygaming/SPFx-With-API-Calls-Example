@@ -4,6 +4,7 @@ import { Component } from "react";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import DataFactory from "../DataFactory";
 import { PrimaryButton } from "office-ui-fabric-react/lib/Button";
+import { PeoplePickerTypesExample } from "./PeoplePicker";
 
 
 export interface ShopinasProps {
@@ -37,13 +38,15 @@ class Shopinas extends React.Component<ShopinasProps, ShopinasState> {
   private _onNewProductButtonClicked= (): void => {
     var api: DataFactory = new DataFactory();
     const url: string = this.props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('Base%20Product')/Items`;
+
     var newProduct : IProduct = {
-        ProductName: "Margarita",
-        ProductDesc: "Ladies drink!",
-        Price: 100,
-        Tax: 2
+      ID: 0,
+      ProductName: "Margarita",
+      ProductDesc: "Ladies drink!",
+      Price: 100,
+      Tax: 2
     }
-    api.AddItemToProducts(this.props.context, url, "Base%20Product", newProduct);
+    api.Products_AddItem(this.props.context, url, "Base%20Product", newProduct);
   };
 
   render(): JSX.Element {
@@ -59,6 +62,7 @@ class Shopinas extends React.Component<ShopinasProps, ShopinasState> {
         </ul>
         <div>
           <PrimaryButton text = "Add Product" onClick={this._onNewProductButtonClicked}/>
+          <PeoplePickerTypesExample/>
         </div>
       </div>
     );
