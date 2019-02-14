@@ -23,7 +23,10 @@ export default class HttpCallExample extends React.Component<IHttpCallExamplePro
         </div> */}
         <span>Hello <b>{this.props.userData !== undefined ? this.props.userData.Title: ""}</b></span>
         <Shopinas context = {this.props.context}/>
-        <Beers context = {this.props.context}/>
+        <div>
+          <Beers context = {this.props.context}/>
+        </div>
+        
       
       </div>
     );

@@ -28,14 +28,15 @@ class Beers extends React.Component<BeersProps, BeersState> {
       selectedOption: undefined
     };
   }
-
   componentDidMount() {
     this.GetProducts();
   }
 
+  
+
   private async GetProducts(){
     var api: DataFactory = new DataFactory();
-    const url: string = this.props.context.pageContext.web.absoluteUrl + `/_api/web/lists//getbytitle('Base%20Product')/Items`;
+    const url: string = this.props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('Base%20Product')/Items`;
     var products = await api.GetProductsAsync(this.props.context, url);
     this.setState({Products: products});
     console.table(this.state.Products);
@@ -49,9 +50,11 @@ class Beers extends React.Component<BeersProps, BeersState> {
   }
 
   render() : JSX.Element {
+    const renderHTML = (rawHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: rawHTML } });
     return (
       <div>
-        <PrimaryButton onClick={this._onShowPanel} text="Order Now" />
+        <PrimaryButton onClick={this._onShowPanel} text="Order Now" style={{ marginRight: '5px' }} />
+        <PrimaryButton onClick={this._onShowPanel} text="Add New Product" style={{ marginRight: '5px' }} />
         <Panel
           isOpen={this.state.showPanel}
           type={PanelType.smallFixedFar}
@@ -61,26 +64,14 @@ class Beers extends React.Component<BeersProps, BeersState> {
           onRenderFooterContent={this._onRenderFooterContent}
         >
          <ChoiceGroup
-            // options={[
-            //   {
-            //     key: 'A',
-            //     text: 'Red Horse'
-            //   },
-            //   {
-            //     key: 'B',
-            //     text: 'Emperador',
-            //   },
-            //   {
-            //     key: 'C',
-            //     text: 'San Mig Light',
-            //   }
-            // ]}
             options={this.state.groupOptions}
             label="Pick one!"
             required={true}
             onChange={this._onChoiceChange}
           />
         </Panel>
+        {/* {renderHTML("<h1>Hello</h1><button>Click Me!</button>")}
+        {renderHTML(`<div class="ExternalClassBAA0AE3ECE1941ADBD14A7C7929DB225"><p><span style="color&#58;rgb(0, 0, 255);font-size&#58;64px;"><span style="">​​ASDFG​​​</span><br style=""></span></p><p>​​​<span id="ms-rterangecursor-start"></span><span id="ms-rterangecursor-end"></span><br></p><br></div>`)} */}
       </div>
     );
   }
